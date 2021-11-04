@@ -1,0 +1,130 @@
+
+                   Virtual Security Research, LLC.
+                      https://www.vsecurity.com/
+                          Security Advisory
+
+=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+
+Advisory Name: ThoughtSpot - Authorization Bypass Allows for Pinboard Corruption
+ Release Date: 2019-06-10
+  Application: ThoughtSpot
+     Versions: 5.x before 5.1.2
+               4.4.1.x onwards
+     Severity: Medium
+       Author: Will Enright <wenright (a) vsecurity . com>
+Vendor Status: Update Released [2]
+CVE Candidate: CVE-2019-12782
+    Reference: https://www.vsecurity.com/resources/advisory/201912782-1.txt
+
+=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+
+
+Product Description
+~-----------------~
+From ThoughtSpot's website [1]: "ThoughtSpot is a search & AI-driven analytics
+platform for the enterprise. Anyone can use search to analyze company data in
+seconds and get automated insights when you need them."
+
+
+Vulnerability Overview
+~--------------------~
+In February 2019, VSR identified an authorization bypass vulnerability in
+ThoughtSpot which allows any low-privilege user with write access to at least
+one pinboard to corrupt arbitrary unauthorized pinboards belonging to any other
+user. The vulnerability originates from a failure to verify user-supplied GUIDs
+to ensure the requesting user is properly authorized to modify the associated
+pinboard. This exploit requires a valid low-privilege user session to submit the
+vulnerable request.
+
+
+Vulnerability Details
+~-------------------~
+The ThoughtSpot application allows users to generate, visualize, and organize
+analytics reports on company data. One method for viewing data is to organize
+reports on pinboards to be shared with specific authorized users or groups.
+However, the application fails to enforce authorization on pinboard update
+requests, allowing a user to modify the ID of pinboards belonging to other users
+without authorization. It does not appear possible for an attacker to gain
+access to or modify a pinboard's contents in place. However, it is possible for
+a low-privilege user to corrupt the original pinboard by spoofing GUIDs in
+normal pinboard update requests. This prevents the original owner from accessing
+the board and removes it from their view. An attacker could effectively corrupt
+/ remove all pinboards from the application deployment, regardless of owner. 
+
+An attacker would need access to a valid low-privilege user session with write
+access to at least one pinboard in order to submit the vulnerable request and
+target user pinboards. Therefore, administrators could review application logs
+to identify malicious users. An attacker would also need to know the GUID
+associated with any targeted pinboards. These GUIDs are revealed within API
+responses during normal application use. Starting in version 5.1, the
+application includes an optional setting which prevents GUIDs from being leaked
+in responses to unauthorized requests.
+
+
+Versions Affected
+~---------------~
+The issue was originally discovered in version 4.5.1.5, but exists starting in
+version 4.4.1. The issue was fixed with the release of version 5.1.2.
+
+
+Vendor Response
+~-------------~
+The following timeline details ThoughtSpot's response to the reported issue:
+
+2019-02-28    ThoughtSpot contacted and initial vulnerability details provided.
+              Internal triage started.
+
+2019-03-05    ThoughtSpot confirmed vulnerability details and outlined 
+              remediation timeline.
+
+2019-05-01    ThoughtSpot confirmed release of version 5.1.2 [2], fixing the
+              vulnerability.
+
+2019-05-13    VSR provided ThoughtSpot with security advisory draft.
+
+2019-06-10    VSR advisory released.
+
+
+Recommendation
+~------------~
+Upgrade all client installs to the latest version of the ThoughtSpot software as
+soon as possible.
+
+
+Common Vulnerabilities and Exposures (CVE) Information
+~----------------------------------------------------~
+The Common Vulnerabilities and Exposures (CVE) project has assigned
+the number CVE-2019-12782 to this issue.  This is a candidates for
+inclusion in the CVE list (http://cve.mitre.org), which standardizes
+names for security problems.
+
+
+Acknowledgments
+~--------------~
+Thanks to the ThoughtSpot team for a prompt response, confirmation, and patch.
+
+
+=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+
+References:
+
+1.  https://www.thoughtspot.com/
+
+2.  https://docs.thoughtspot.com/5.1/release/notes.html
+
+
+=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+
+This advisory is distributed for educational purposes only with the sincere 
+hope that it will help promote public safety.  This advisory comes with 
+absolutely NO WARRANTY; not even the implied warranty of merchantability or 
+fitness for a particular purpose.  Neither Virtual Security Research, LLC nor
+the author accepts any liability for any direct, indirect, or consequential
+loss or damage arising from use of, or reliance on, this information.
+
+See the VSR disclosure policy for more information on our responsible 
+disclosure practices:
+  http://www.vsecurity.com/company/disclosure
+
+=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+     Copyright 2019 Virtual Security Research, LLC.  All rights reserved.
